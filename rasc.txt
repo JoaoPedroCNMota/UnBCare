@@ -1,0 +1,104 @@
+demandaMedicamentos (x:xs) 
+      | length (snd x) > 1 = (fst x, length(snd x)):xs
+      | otherwise = demandaMedicamentos xs
+
+demandaMedicamentos (x:xs) = map (fst x, (length(snd x)) xs
+
+demandaMedicamentos xs = map count xs
+      where count x = (fst x, length(snd x))
+      
+
+qs :: [EstoqueMedicamentos] -> [EstoqueMedicamentos]
+qs [] = []
+qs (a:as) = qs [e | e <- as, e <= a]  ++ [a] ++ qs [e | e <- as, e > a]
+
+ ------------------------------
+
+
+gerais
+http://learnyouahaskell.com/higher-order-functions#maps-and-filters
+https://www.portugal-a-programar.pt/forums/topic/3786-tutorial-de-haskell/
+http://haskell.tailorfontela.com.br/higher-order-functions
+
+ ------------------------------
+
+
+questão 5
+https://stackoverflow.com/questions/22050710/test-if-a-list-is-sorted
+
+ ------------------------------
+
+questão 6 
+http://haskell.tailorfontela.com.br/making-our-own-types-and-typeclasses
+https://stackoverflow.com/questions/9964104/haskell-custom-isordered-function-to-check-a-list-of-integers
+https://stackoverflow.com/questions/6088935/checking-for-a-particular-data-constructor
+https://stackoverflow.com/questions/56406701/how-to-compare-a-custom-data-type-in-haskell
+https://stackoverflow.com/questions/46575744/is-it-possible-to-access-a-specific-piece-of-a-custom-data-type-in-haskell
+
+plantaoValido :: Plantao -> Bool
+plantaoValido [] = True
+plantaoValido (x:y:xys)
+   | fst x /= fst y = True
+   | fst x < fst y = True
+   | verificaCuidado(snd x) == True = True
+   | otherwise = plantaoValido (y:xys)
+
+verificaCuidado:: [Cuidado] -> Bool
+verificaCuidado _ = True
+verificaCuidado (x:y:xys)
+   | (tipoCuidado x == tipoCuidado y) = verificaCuidado (y:xys)
+   | otherwise = False
+
+tipoCuidado:: Cuidado -> Int
+tipoCuidado (Comprar _ _) = 1
+tipoCuidado (Medicar _) = 2
+
+ ------------------------------
+questão 7 
+
+https://stackoverflow.com/questions/14678205/haskell-list-comprehension-with-lists-inside-a-tuple-inside-a-list
+https://stackoverflow.com/questions/60022571/how-can-i-append-a-value-to-a-list-inside-a-tuple-in-haskell
+https://stackoverflow.com/questions/12398458/how-to-group-similar-items-in-a-list-using-haskell
+
+geraPlanoReceituario (x:xs)
+   | length(snd x) /= 0 = map separate (snd x)
+   where separate y = (y, [])
+
+
+   geraPlanoReceituario xs = map tuplaPorTupla xs
+   where tuplaPorTupla x = separaHorario(snd x)
+         separaHorario y = (y, [])
+
+geraPlanoReceituario xs = capturaTupla(map (\ (x,y) -> (y,x) ) xs)
+   where capturaTupla (y:ys) = horarios( (fst y) (snd y) ) : capturaTupla ys
+         horarios (z:zs) m = (z, [m]) : horarios zs m
+
+
+         geraPlanoReceituario xs = do 
+   map capturaTupla xs
+   where capturaTupla y = horarios (snd y) (fst y)
+         horarios (z:zs) m = (z, [m]) : horarios zs m
+
+geraPlanoReceituario [] = []
+geraPlanoReceituario ((x, h):xhs)
+   | length h > 1 = map capturaTupla h
+   | otherwise = geraPlanoReceituario xhs
+   where capturaTupla y = (y, [x])
+
+linearizaLista:: [(a, [b])] -> [(b, a)]
+linearizaLista [] = []
+linearizaLista ((a, b):abs)
+   | length b >= 1 = map decompoeLista b ++ linearizaLista abs
+   where decompoeLista b = (b, a)
+
+agrupaPadraoLista:: Eq a => [(a, b)] -> [(a,[b])]
+agrupaPadraoLista (a:b:abs)
+   | (fst a /= fst b) = (fst a, [snd a]) : agrupaPadraoLista (b:abs)
+   | otherwise = (fst a, [snd a, snd b]) : agrupaPadraoLista (b:abs)
+
+   --------------------------------------------------
+   Q 9
+
+   executaPlantao (p:ps) (e:es) 
+   | get1of3(tipoCuidado p) == 2 = tomarMedicamento( get2of3(tipoCuidado p) [e]) : executaPlantao ps es
+   | otherwise = comprarMedicamento( snd(tipoCuidado p) )
